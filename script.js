@@ -7,7 +7,7 @@
 
 // === CONFIGURATION ===
 const CONFIG = {
-    INSTAGRAM_URL: 'https://instagram.com/your_username', // Change to your Instagram
+    INSTAGRAM_URL: 'https://instagram.com/medvedev.tech', // Change to your Instagram
     PARTICLE_COUNT: 50,
     HIGHLIGHT_INTERVAL: 5000,
     SEARCH_DEBOUNCE: 300,
