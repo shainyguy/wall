@@ -117,21 +117,6 @@ async function loadFollowers() {
 }
 
 /**
- * Generate fallback followers for demo
- */
-function generateFallbackFollowers(count) {
-    const prefixes = ['alex', 'emma', 'mike', 'sofia', 'david', 'anna', 'lucas', 'olivia', 'noah', 'ava'];
-    const suffixes = ['_photo', '_design', '_art', '_dev', '_music', '_travel', '_fitness', '_tech', '_creative', '_style'];
-    
-    return Array.from({ length: count }, (_, i) => ({
-        id: i + 1,
-        username: `${prefixes[i % prefixes.length]}${suffixes[Math.floor(i / 10) % suffixes.length]}${i > 20 ? i : ''}`,
-        addedAt: new Date(Date.now() - i * 86400000).toISOString().split('T')[0],
-        isNew: i < 5
-    }));
-}
-
-/**
  * Update statistics display
  */
 function updateStats() {
