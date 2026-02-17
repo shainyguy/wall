@@ -8,8 +8,8 @@
   "followers": [
     {
       "id": 1,
-      "username": "user_example_1",
-      "displayName": "Пример 1",
+      "username": "witlessss",
+      "displayName": "witlessss",
       "avatarUrl": "",
       "addedAt": "2025-01-15",
       "isNew": true,
@@ -17,16 +17,16 @@
     },
     {
       "id": 2,
-      "username": "user_example_2",
-      "displayName": "Пример 2",
+      "username": "astrey.store",
+      "displayName": "astrey.store",
       "avatarUrl": "",
       "addedAt": "2025-01-15",
       "isNew": true
     },
     {
       "id": 3,
-      "username": "user_example_3",
-      "displayName": "Пример 3",
+      "username": "y_biryukova00",
+      "displayName": "y_biryukova00",
       "avatarUrl": "",
       "addedAt": "2025-01-14",
       "isNew": false
