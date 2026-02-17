@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "username": "medvedev.tech",
+    "displayName": "Medvedev Tech",
+    "lastUpdated": "2025-01-15T12:00:00Z",
+    "instagramUrl": "https://instagram.com/medvedev.tech"
+  },
+  "followers": [
+    {
+      "id": 1,
+      "username": "user_example_1",
+      "displayName": "Пример 1",
+      "avatarUrl": "",
+      "addedAt": "2025-01-15",
+      "isNew": true,
+      "note": "Замени на реальных подписчиков!"
+    },
+    {
+      "id": 2,
+      "username": "user_example_2",
+      "displayName": "Пример 2",
+      "avatarUrl": "",
+      "addedAt": "2025-01-15",
+      "isNew": true
+    },
+    {
+      "id": 3,
+      "username": "user_example_3",
+      "displayName": "Пример 3",
+      "avatarUrl": "",
+      "addedAt": "2025-01-14",
+      "isNew": false
+    }
+  ]
+}

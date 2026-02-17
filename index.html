@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="Стена подписчиков @medvedev.tech — найди себя или подпишись, чтобы попасть!">
+    
+    <meta property="og:title" content="Стена Подписчиков @medvedev.tech">
+    <meta property="og:description" content="Интерактивная стена всех подписчиков. Найди себя!">
+    <meta property="og:type" content="website">
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    
+    <title>Стена Подписчиков @medvedev.tech</title>
+    
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --bg-glass: rgba(20, 20, 30, 0.85);
+            --bg-glass-light: rgba(255, 255, 255, 0.05);
+            
+            --neon-purple: #a855f7;
+            --neon-pink: #ec4899;
+            --neon-blue: #3b82f6;
+            --neon-cyan: #22d3ee;
+            --neon-green: #10b981;
+            
+            --gradient-primary: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            --gradient-secondary: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+            --gradient-instagram: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            
+            --shadow-glow: 0 0 30px rgba(168, 85, 247, 0.4);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+            
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .app-container {
+            position: relative;
+            min-height: 100vh;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--gradient-instagram);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .add-me-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            background: var(--gradient-secondary);
+            border: none;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .add-me-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+        }
+
+        /* Stats */
+        .stats-container {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-glass-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            transition: var(--transition-fast);
+        }
+
+        .stat-badge:hover {
+            border-color: var(--neon-purple);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-badge .count {
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-badge.new-today {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 211, 238, 0.2));
+            border-color: var(--neon-green);
+        }
+
+        .stat-badge.new-today .count {
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Search */
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 3rem 0.875rem 2.75rem;
+            background: var(--bg-glass-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .search-input::placeholder { color: var(--text-muted); }
+
+        .search-input:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 1rem;
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
+            color: var(--text-secondary);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .search-clear.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .search-result-message {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0.5rem;
+            padding: 1rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition-smooth);
+            z-index: 50;
+        }
+
+        .search-result-message.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .search-result-message.not-found {
+            border-color: var(--neon-pink);
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.1));
+        }
+
+        .search-result-message.found {
+            border-color: var(--neon-green);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(34, 211, 238, 0.1));
+        }
+
+        .search-message-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-message-text { font-size: 0.9rem; }
+
+        .mini-cta-btn {
+            padding: 0.5rem 1rem;
+            background: var(--gradient-instagram);
+            border: none;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .mini-cta-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Wall */
+        .wall-container {
+            padding-top: 200px;
+            padding-bottom: 140px;
+            min-height: 100vh;
+        }
+
+        .wall-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .wall-wrapper:active { cursor: grabbing; }
+
+        .followers-wall {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+            padding: 1rem;
+            transform-origin: center top;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        /* Follower Card */
+        .follower-card {
+            position: relative;
+            padding: 0.75rem 0.5rem;
+            background: var(--bg-glass-light);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+        }
+
+        .follower-card.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .follower-card:hover {
+            border-color: var(--neon-purple);
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.1));
+            transform: scale(1.08) translateY(-5px);
+            box-shadow: var(--shadow-glow), var(--shadow-card);
+            z-index: 10;
+        }
+
+        .follower-card.highlighted {
+            animation: pulseHighlight 2s ease-in-out infinite;
+            border-color: var(--neon-cyan);
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.15));
+            z-index: 10;
+        }
+
+        .follower-card.found {
+            animation: foundPulse 0.6s ease-out;
+            border-color: var(--neon-green);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(34, 211, 238, 0.2));
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+            z-index: 100;
+            transform: scale(1.15);
+        }
+
+        .follower-card.new-badge::before {
+            content: '✨ NEW';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            padding: 2px 8px;
+            background: var(--gradient-secondary);
+            font-size: 0.55rem;
+            font-weight: 700;
+            border-radius: 6px;
+            animation: newBadgePulse 2s ease-in-out infinite;
+        }
+
+        .follower-card.self-added::after {
+            content: '👋';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            font-size: 1rem;
+        }
+
+        /* Avatar */
+        .follower-avatar {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 0.5rem;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .follower-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .follower-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: var(--gradient-instagram);
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition-fast);
+        }
+
+        .follower-card:hover .follower-avatar::after { opacity: 1; }
+
+        .follower-username {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: var(--transition-fast);
+        }
+
+        .follower-card:hover .follower-username { color: var(--text-primary); }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state .emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: center;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .cta-text strong { color: var(--text-primary); }
+
+        .cta-buttons {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: var(--gradient-instagram);
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(220, 39, 67, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(220, 39, 67, 0.6);
+        }
+
+        .cta-button.secondary {
+            background: var(--bg-glass-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: none;
+        }
+
+        .cta-button.secondary:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 100%;
+            transform: scale(0.9) translateY(20px);
+            transition: var(--transition-smooth);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-glass-light);
+            border-radius: 50%;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: var(--neon-pink);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-glass-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition-fast);
+        }
+
+        .form-input:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2);
+        }
+
+        .form-input::placeholder { color: var(--text-muted); }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .form-submit:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .form-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .success-message .emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--neon-green);
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 140px;
+            right: 1rem;
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .zoom-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .zoom-btn:hover {
+            border-color: var(--neon-purple);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .zoom-level {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: var(--bg-glass);
+            padding: 0.25rem;
+            border-radius: 6px;
+        }
+
+        /* Game Button */
+        .game-mode-btn {
+            position: fixed;
+            bottom: 260px;
+            right: 1rem;
+            z-index: 90;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+        }
+
+        .game-mode-btn:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+        }
+
+        .game-mode-btn.active {
+            background: var(--gradient-secondary);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        /* Game Overlay */
+        .game-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .game-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-target {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .game-timer {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .game-timer.warning {
+            color: var(--neon-pink);
+            animation: timerPulse 0.5s ease-in-out infinite;
+        }
+
+        .game-result { text-align: center; }
+        .game-result h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .game-result.win h3 { color: var(--neon-green); }
+        .game-result.lose h3 { color: var(--neon-pink); }
+
+        .game-close-btn {
+            padding: 1rem 2rem;
+            background: var(--bg-glass-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .game-close-btn:hover { background: var(--bg-tertiary); }
+
+        /* Intro */
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .intro-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .intro-logo {
+            font-size: 4rem;
+            animation: introLogoFloat 2s ease-in-out infinite;
+        }
+
+        .intro-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .intro-loader {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .intro-loader span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--neon-purple);
+            animation: introLoaderBounce 1.4s ease-in-out infinite;
+        }
+
+        .intro-loader span:nth-child(2) { animation-delay: 0.2s; }
+        .intro-loader span:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Animations */
+        @keyframes pulseHighlight {
+            0%, 100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(34, 211, 238, 0.8); }
+        }
+
+        @keyframes foundPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1.15); }
+        }
+
+        @keyframes newBadgePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes introLogoFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        @keyframes introLoaderBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        @keyframes flyIn {
+            0% {
+                opacity: 0;
+                transform: translate(var(--fly-x, 0), var(--fly-y, 0)) scale(0.3) rotate(var(--fly-rotate, 0deg));
+            }
+            100% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+        }
+
+        /* Responsive */
+        @media (min-width: 480px) {
+            .followers-wall {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+        }
+
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            .search-container { flex: 0 0 300px; }
+            .wall-container { padding-top: 130px; }
+            .followers-wall {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+            .follower-avatar { width: 60px; height: 60px; }
+            .follower-username { font-size: 0.8rem; }
+            .cta-content { flex-direction: row; justify-content: space-between; }
+        }
+
+        @media (min-width: 1024px) {
+            .header { padding: 1.25rem 2rem; }
+            .search-container { flex: 0 0 380px; }
+            .followers-wall {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1.25rem;
+                padding: 2rem;
+            }
+            .follower-avatar { width: 68px; height: 68px; font-size: 1.5rem; }
+        }
+
+        .hidden { display: none !important; }
+
+        @media (hover: none) and (pointer: coarse) {
+            .follower-card:hover {
+                transform: none;
+                border-color: rgba(255, 255, 255, 0.08);
+                background: var(--bg-glass-light);
+                box-shadow: none;
+            }
+            .follower-card:active {
+                transform: scale(0.95);
+                border-color: var(--neon-purple);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-logo">🚀</div>
+        <h2 class="intro-title">@medvedev.tech</h2>
+        <p class="intro-subtitle">Загружаем стену подписчиков...</p>
+        <div class="intro-loader">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Particles -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- App -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="https://instagram.com/medvedev.tech" target="_blank" class="logo">
+                        <div class="logo-icon">🚀</div>
+                        <div class="logo-text">
+                            <h1>@medvedev.tech</h1>
+                            <span>Стена подписчиков</span>
+                        </div>
+                    </a>
+                    <button class="add-me-btn" id="addMeBtn">
+                        <span>✨</span>
+                        <span>Добавить себя</span>
+                    </button>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-badge">
+                        <span>👥</span>
+                        <span class="count" id="followerCount">0</span>
+                        <span>на стене</span>
+                    </div>
+                    <div class="stat-badge new-today">
+                        <span>✨</span>
+                        <span class="count" id="todayCount">0</span>
+                        <span>новых</span>
+                    </div>
+                </div>
+                
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" id="searchInput"
+                            placeholder="Найди себя на стене..." autocomplete="off">
+                        <span class="search-icon">🔍</span>
+                        <button class="search-clear" id="searchClear">✕</button>
+                    </div>
+                    <div class="search-result-message" id="searchMessage">
+                        <div class="search-message-content"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Wall -->
+        <main class="wall-container">
+            <div class="wall-wrapper" id="wallWrapper">
+                <div class="followers-wall" id="followersWall"></div>
+            </div>
+        </main>
+
+        <!-- Game Button -->
+        <button class="game-mode-btn" id="gameModeBtn" title="Игра: Найди за 5 секунд">🎮</button>
+
+        <!-- Zoom -->
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomIn">+</button>
+            <div class="zoom-level" id="zoomLevel">100%</div>
+            <button class="zoom-btn" id="zoomOut">−</button>
+        </div>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <p class="cta-text">
+                    <strong>Хочешь попасть на стену?</strong> 
+                    Подпишись и добавь себя! 🎉
+                </p>
+                <div class="cta-buttons">
+                    <a href="https://instagram.com/medvedev.tech" target="_blank" class="cta-button">
+                        <span>📸</span> Подписаться
+                    </a>
+                    <button class="cta-button secondary" id="addMeBtn2">
+                        <span>✨</span> Добавить себя
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add Me Modal -->
+    <div class="modal-overlay" id="addMeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">✨ Добавить себя на стену</h3>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <form id="addMeForm">
+                <div class="form-group">
+                    <label class="form-label">Твой Instagram ник *</label>
+                    <input type="text" class="form-input" id="inputUsername" 
+                        placeholder="username (без @)" required maxlength="30">
+                    <p class="form-hint">Только ник, без @ в начале</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Имя (необязательно)</label>
+                    <input type="text" class="form-input" id="inputDisplayName" 
+                        placeholder="Как тебя зовут?" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">URL аватарки (необязательно)</label>
+                    <input type="url" class="form-input" id="inputAvatarUrl" 
+                        placeholder="https://...">
+                    <p class="form-hint">Ссылка на твоё фото. Если пусто — создадим автоматически</p>
+                </div>
+                <button type="submit" class="form-submit" id="submitBtn">
+                    🚀 Добавить на стену
+                </button>
+            </form>
+            <div class="success-message hidden" id="successMessage">
+                <div class="emoji">🎉</div>
+                <h3>Ты на стене!</h3>
+                <p>Теперь найди себя и покажи друзьям!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Overlay -->
+    <div class="game-overlay" id="gameOverlay">
+        <h2 class="game-title" id="gameTitle">🎮 Найди за 5 секунд!</h2>
+        <div class="game-target" id="gameTarget">@username</div>
+        <div class="game-timer" id="gameTimer">5.0</div>
+        <div class="game-result hidden" id="gameResult"><h3>Результат</h3></div>
+        <button class="game-close-btn" id="gameCloseBtn">Закрыть</button>
+    </div>
+
+    <script>
+        /**
+         * @medvedev.tech Followers Wall
+         * Интерактивная стена подписчиков
+         */
+
+        // === CONFIG ===
+        const CONFIG = {
+            INSTAGRAM_URL: 'https://instagram.com/medvedev.tech',
+            USERNAME: 'medvedev.tech',
+            PARTICLE_COUNT: 40,
+            HIGHLIGHT_INTERVAL: 4000,
+            SEARCH_DEBOUNCE: 300,
+            INTRO_DURATION: 2000,
+            GAME_DURATION: 5000,
+            MIN_ZOOM: 0.5,
+            MAX_ZOOM: 2,
+            ZOOM_STEP: 0.15,
+            STORAGE_KEY: 'medvedev_wall_followers'
+        };
+
+        // === STATE ===
+        const state = {
+            followers: [],
+            meta: {},
+            zoom: 1,
+            panX: 0,
+            panY: 0,
+            isDragging: false,
+            startX: 0,
+            startY: 0,
+            isGameActive: false,
+            gameTarget: null,
+            gameTimer: null,
+            searchTimeout: null,
+            highlightInterval: null
+        };
+
+        // === DOM ===
+        let elements = {};
+
+        // === INIT ===
+        document.addEventListener('DOMContentLoaded', init);
+
+        async function init() {
+            cacheElements();
+            await loadFollowers();
+            initParticleCanvas();
+            renderWall();
+            setupEventListeners();
+            startHighlightRotation();
+            
+            setTimeout(() => {
+                elements.introOverlay.classList.add('hidden');
+                triggerFlyInAnimation();
+            }, CONFIG.INTRO_DURATION);
+        }
+
+        function cacheElements() {
+            elements = {
+                particleCanvas: document.getElementById('particleCanvas'),
+                followerCount: document.getElementById('followerCount'),
+                todayCount: document.getElementById('todayCount'),
+                searchInput: document.getElementById('searchInput'),
+                searchClear: document.getElementById('searchClear'),
+                searchMessage: document.getElementById('searchMessage'),
+                wallWrapper: document.getElementById('wallWrapper'),
+                followersWall: document.getElementById('followersWall'),
+                gameModeBtn: document.getElementById('gameModeBtn'),
+                gameOverlay: document.getElementById('gameOverlay'),
+                gameTitle: document.getElementById('gameTitle'),
+                gameTarget: document.getElementById('gameTarget'),
+                gameTimer: document.getElementById('gameTimer'),
+                gameResult: document.getElementById('gameResult'),
+                gameCloseBtn: document.getElementById('gameCloseBtn'),
+                zoomIn: document.getElementById('zoomIn'),
+                zoomOut: document.getElementById('zoomOut'),
+                zoomLevel: document.getElementById('zoomLevel'),
+                introOverlay: document.getElementById('introOverlay'),
+                addMeModal: document.getElementById('addMeModal'),
+                addMeForm: document.getElementById('addMeForm'),
+                modalClose: document.getElementById('modalClose'),
+                successMessage: document.getElementById('successMessage'),
+                addMeBtn: document.getElementById('addMeBtn'),
+                addMeBtn2: document.getElementById('addMeBtn2')
+            };
+        }
+
+        // === LOAD FOLLOWERS ===
+        async function loadFollowers() {
+            // 1. Load from JSON file
+            let jsonFollowers = [];
+            try {
+                const response = await fetch('followers.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    jsonFollowers = data.followers || [];
+                    state.meta = data.meta || {};
+                }
+            } catch (e) {
+                console.log('No followers.json found, using localStorage only');
+            }
+
+            // 2. Load self-added from localStorage
+            const savedFollowers = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY) || '[]');
+
+            // 3. Merge (avoid duplicates by username)
+            const allFollowers = [...jsonFollowers];
+            const existingUsernames = new Set(jsonFollowers.map(f => f.username.toLowerCase()));
+            
+            savedFollowers.forEach(f => {
+                if (!existingUsernames.has(f.username.toLowerCase())) {
+                    allFollowers.push({...f, selfAdded: true});
+                }
+            });
+
+            state.followers = allFollowers;
+            updateStats();
+        }
+
+        function updateStats() {
+            elements.followerCount.textContent = state.followers.length.toLocaleString();
+            const newCount = state.followers.filter(f => f.isNew || f.selfAdded).length;
+            elements.todayCount.textContent = newCount;
+        }
+
+        // === PARTICLE CANVAS ===
+        let particles = [];
+        let particleCtx = null;
+
+        function initParticleCanvas() {
+            const canvas = elements.particleCanvas;
+            particleCtx = canvas.getContext('2d');
+            resizeCanvas();
+            createParticles();
+            animateParticles();
+            window.addEventListener('resize', debounce(resizeCanvas, 200));
+        }
+
+        function resizeCanvas() {
+            elements.particleCanvas.width = window.innerWidth;
+            elements.particleCanvas.height = window.innerHeight;
+            createParticles();
+        }
+
+        function createParticles() {
+            particles = [];
+            const count = window.innerWidth < 768 ? CONFIG.PARTICLE_COUNT / 2 : CONFIG.PARTICLE_COUNT;
+            const colors = ['rgba(168, 85, 247, ', 'rgba(236, 72, 153, ', 'rgba(59, 130, 246, ', 'rgba(34, 211, 238, '];
+            
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    radius: Math.random() * 2 + 1,
+                    speedX: (Math.random() - 0.5) * 0.5,
+                    speedY: (Math.random() - 0.5) * 0.5,
+                    opacity: Math.random() * 0.5 + 0.2,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
+        }
+
+        function animateParticles() {
+            particleCtx.clearRect(0, 0, elements.particleCanvas.width, elements.particleCanvas.height);
+            
+            particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                if (p.x < 0) p.x = window.innerWidth;
+                if (p.x > window.innerWidth) p.x = 0;
+                if (p.y < 0) p.y = window.innerHeight;
+                if (p.y > window.innerHeight) p.y = 0;
+                
+                particleCtx.beginPath();
+                particleCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                particleCtx.fillStyle = p.color + p.opacity + ')';
+                particleCtx.fill();
+            });
+            
+            // Connections
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        particleCtx.beginPath();
+                        particleCtx.moveTo(particles[i].x, particles[i].y);
+                        particleCtx.lineTo(particles[j].x, particles[j].y);
+                        particleCtx.strokeStyle = `rgba(168, 85, 247, ${(1 - dist/120) * 0.12})`;
+                        particleCtx.stroke();
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animateParticles);
+        }
+
+        // === RENDER WALL ===
+        function renderWall() {
+            elements.followersWall.innerHTML = '';
+            
+            if (state.followers.length === 0) {
+                elements.followersWall.innerHTML = `
+                    <div class="empty-state">
+                        <div class="emoji">🚀</div>
+                        <h3>Стена пока пуста!</h3>
+                        <p>Стань первым на стене @medvedev.tech</p>
+                        <button class="cta-button" onclick="openAddModal()">
+                            ✨ Добавить себя
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            state.followers.forEach((follower, index) => {
+                const card = createFollowerCard(follower, index);
+                elements.followersWall.appendChild(card);
+            });
+            
+            // Trigger visibility
+            setTimeout(() => {
+                document.querySelectorAll('.follower-card').forEach(card => {
+                    card.classList.add('visible');
+                });
+            }, 100);
+        }
+
+        function createFollowerCard(follower, index) {
+            const card = document.createElement('div');
+            card.className = 'follower-card';
+            card.dataset.username = follower.username.toLowerCase();
+            card.dataset.index = index;
+            
+            if (follower.isNew) card.classList.add('new-badge');
+            if (follower.selfAdded) card.classList.add('self-added');
+            
+            // Avatar
+            const avatar = document.createElement('div');
+            avatar.className = 'follower-avatar';
+            
+            if (follower.avatarUrl) {
+                const img = document.createElement('img');
+                img.src = follower.avatarUrl;
+                img.alt = follower.username;
+                img.onerror = () => {
+                    img.remove();
+                    avatar.textContent = follower.username.charAt(0).toUpperCase();
+                };
+                avatar.appendChild(img);
+            } else {
+                // Generate gradient avatar
+                avatar.textContent = follower.username.charAt(0).toUpperCase();
+                const hue = hashCode(follower.username) % 360;
+                avatar.style.background = `linear-gradient(135deg, hsl(${hue}, 80%, 60%), hsl(${(hue + 40) % 360}, 80%, 50%))`;
+            }
+            
+            // Username
+            const username = document.createElement('div');
+            username.className = 'follower-username';
+            username.textContent = `@${follower.username}`;
+            
+            card.appendChild(avatar);
+            card.appendChild(username);
+            
+            // Events
+            card.addEventListener('click', () => {
+                if (state.isGameActive) {
+                    checkGameAnswer(follower.username);
+                } else {
+                    window.open(`https://instagram.com/${follower.username}`, '_blank');
+                }
+            });
+            
+            return card;
+        }
+
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function triggerFlyInAnimation() {
+            document.querySelectorAll('.follower-card').forEach((card, index) => {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 400 + 200;
+                card.style.setProperty('--fly-x', `${Math.cos(angle) * distance}px`);
+                card.style.setProperty('--fly-y', `${Math.sin(angle) * distance}px`);
+                card.style.setProperty('--fly-rotate', `${(Math.random() - 0.5) * 180}deg`);
+                card.style.animation = `flyIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) ${index * 30}ms forwards`;
+            });
+        }
+
+        // === EVENT LISTENERS ===
+        function setupEventListeners() {
+            // Search
+            elements.searchInput.addEventListener('input', handleSearchInput);
+            elements.searchClear.addEventListener('click', clearSearch);
+            
+            // Zoom
+            elements.zoomIn.addEventListener('click', () => handleZoom(CONFIG.ZOOM_STEP));
+            elements.zoomOut.addEventListener('click', () => handleZoom(-CONFIG.ZOOM_STEP));
+            elements.wallWrapper.addEventListener('wheel', handleWheelZoom, { passive: false });
+            
+            // Drag
+            elements.wallWrapper.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+            
+            // Touch
+            elements.wallWrapper.addEventListener('touchstart', handleTouchStart, { passive: false });
+            elements.wallWrapper.addEventListener('touchmove', handleTouchMove, { passive: false });
+            elements.wallWrapper.addEventListener('touchend', handleTouchEnd);
+            
+            // Game
+            elements.gameModeBtn.addEventListener('click', startGame);
+            elements.gameCloseBtn.addEventListener('click', closeGame);
+            
+            // Modal
+            elements.addMeBtn.addEventListener('click', openAddModal);
+            elements.addMeBtn2.addEventListener('click', openAddModal);
+            elements.modalClose.addEventListener('click', closeAddModal);
+            elements.addMeModal.addEventListener('click', (e) => {
+                if (e.target === elements.addMeModal) closeAddModal();
+            });
+            elements.addMeForm.addEventListener('submit', handleAddMe);
+            
+            // Keyboard
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeAddModal();
+                    closeGame();
+                    clearSearch();
+                }
+            });
+        }
+
+        // === SEARCH ===
+        function handleSearchInput(e) {
+            const query = e.target.value.trim();
+            elements.searchClear.classList.toggle('visible', query.length > 0);
+            clearTimeout(state.searchTimeout);
+            state.searchTimeout = setTimeout(() => performSearch(query), CONFIG.SEARCH_DEBOUNCE);
+        }
+
+        function performSearch(query) {
+            if (!query) { hideSearchMessage(); resetAllCards(); return; }
+            const lowerQuery = query.toLowerCase().replace('@', '');
+            let foundCard = null;
+            
+            document.querySelectorAll('.follower-card').forEach(card => {
+                if (card.dataset.username.includes(lowerQuery) && !foundCard) {
+                    foundCard = card;
+                }
+            });
+            
+            if (foundCard) {
+                showFoundMessage(foundCard.dataset.username);
+                scrollToCard(foundCard);
+                highlightFoundCard(foundCard);
+            } else {
+                showNotFoundMessage(query);
+            }
+        }
+
+        function scrollToCard(card) {
+            resetAllCards();
+            card.classList.add('found');
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function highlightFoundCard(card) {
+            setTimeout(() => card.classList.remove('found'), 3000);
+        }
+
+        function resetAllCards() {
+            document.querySelectorAll('.follower-card').forEach(c => {
+                c.classList.remove('found', 'highlighted');
+            });
+        }
+
+        function showFoundMessage(username) {
+            const content = elements.searchMessage.querySelector('.search-message-content');
+            content.innerHTML = `
+                <span class="search-message-text">✨ <strong>@${username}</strong> на стене!</span>
+            `;
+            elements.searchMessage.className = 'search-result-message visible found';
+        }
+
+        function showNotFoundMessage(query) {
+            const content = elements.searchMessage.querySelector('.search-message-content');
+            content.innerHTML = `
+                <span class="search-message-text">👀 <strong>@${query}</strong> пока нет на стене</span>
+                <button class="mini-cta-btn" onclick="openAddModal()">Добавить себя</button>
+            `;
+            elements.searchMessage.className = 'search-result-message visible not-found';
+        }
+
+        function hideSearchMessage() {
+            elements.searchMessage.classList.remove('visible');
+        }
+
+        function clearSearch() {
+            elements.searchInput.value = '';
+            elements.searchClear.classList.remove('visible');
+            hideSearchMessage();
+            resetAllCards();
+        }
+
+        // === ZOOM ===
+        function handleZoom(delta) {
+            state.zoom = Math.max(CONFIG.MIN_ZOOM, Math.min(CONFIG.MAX_ZOOM, state.zoom + delta));
+            updateWallTransform();
+        }
+
+        function handleWheelZoom(e) {
+            e.preventDefault();
+            handleZoom(e.deltaY > 0 ? -CONFIG.ZOOM_STEP : CONFIG.ZOOM_STEP);
+        }
+
+        function updateWallTransform() {
+            elements.followersWall.style.transform = `scale(${state.zoom})`;
+            elements.zoomLevel.textContent = `${Math.round(state.zoom * 100)}%`;
+        }
+
+        // === DRAG ===
+        function startDrag(e) {
+            if (e.target.closest('.follower-card')) return;
+            state.isDragging = true;
+            state.startX = e.clientX;
+            state.startY = e.clientY;
+            elements.wallWrapper.style.cursor = 'grabbing';
+        }
+
+        function drag(e) {
+            if (!state.isDragging) return;
+            e.preventDefault();
+        }
+
+        function endDrag() {
+            state.isDragging = false;
+            elements.wallWrapper.style.cursor = 'grab';
+        }
+
+        // === TOUCH ===
+        let lastTouchDistance = 0;
+
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                lastTouchDistance = getTouchDistance(e.touches);
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const dist = getTouchDistance(e.touches);
+                handleZoom((dist - lastTouchDistance) * 0.005);
+                lastTouchDistance = dist;
+            }
+        }
+
+        function handleTouchEnd() {}
+
+        function getTouchDistance(touches) {
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // === HIGHLIGHT ROTATION ===
+        function startHighlightRotation() {
+            highlightRandom();
+            state.highlightInterval = setInterval(highlightRandom, CONFIG.HIGHLIGHT_INTERVAL);
+        }
+
+        function highlightRandom() {
+            document.querySelectorAll('.follower-card.highlighted').forEach(c => c.classList.remove('highlighted'));
+            const cards = document.querySelectorAll('.follower-card');
+            if (cards.length > 0) {
+                cards[Math.floor(Math.random() * cards.length)].classList.add('highlighted');
+            }
+        }
+
+        // === ADD ME MODAL ===
+        function openAddModal() {
+            elements.addMeModal.classList.add('active');
+            elements.addMeForm.classList.remove('hidden');
+            elements.successMessage.classList.add('hidden');
+            document.getElementById('inputUsername').focus();
+        }
+
+        function closeAddModal() {
+            elements.addMeModal.classList.remove('active');
+        }
+
+        function handleAddMe(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('inputUsername').value.trim().replace('@', '');
+            const displayName = document.getElementById('inputDisplayName').value.trim();
+            const avatarUrl = document.getElementById('inputAvatarUrl').value.trim();
+            
+            if (!username) return;
+            
+            // Check if already exists
+            const exists = state.followers.some(f => f.username.toLowerCase() === username.toLowerCase());
+            if (exists) {
+                alert('Ты уже на стене! 🎉');
+                closeAddModal();
+                // Find and highlight
+                const card = document.querySelector(`[data-username="${username.toLowerCase()}"]`);
+                if (card) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.classList.add('found');
+                    setTimeout(() => card.classList.remove('found'), 3000);
+                }
+                return;
+            }
+            
+            // Create new follower
+            const newFollower = {
+                id: Date.now(),
+                username: username,
+                displayName: displayName || username,
+                avatarUrl: avatarUrl || '',
+                addedAt: new Date().toISOString().split('T')[0],
+                isNew: true,
+                selfAdded: true
+            };
+            
+            // Save to localStorage
+            const savedFollowers = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY) || '[]');
+            savedFollowers.push(newFollower);
+            localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(savedFollowers));
+            
+            // Add to state
+            state.followers.unshift(newFollower);
+            
+            // Show success
+            elements.addMeForm.classList.add('hidden');
+            elements.successMessage.classList.remove('hidden');
+            
+            // Re-render
+            setTimeout(() => {
+                renderWall();
+                updateStats();
+                closeAddModal();
+                
+                // Highlight new card
+                setTimeout(() => {
+                    const newCard = document.querySelector(`[data-username="${username.toLowerCase()}"]`);
+                    if (newCard) {
+                        newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        newCard.classList.add('found');
+                    }
+                }, 500);
+            }, 1500);
+            
+            // Reset form
+            elements.addMeForm.reset();
+        }
+
+        // === GAME ===
+        function startGame() {
+            if (state.followers.length < 3) {
+                alert('Нужно минимум 3 человека на стене для игры!');
+                return;
+            }
+            
+            state.isGameActive = true;
+            elements.gameModeBtn.classList.add('active');
+            
+            const randomFollower = state.followers[Math.floor(Math.random() * state.followers.length)];
+            state.gameTarget = randomFollower.username;
+            
+            elements.gameTarget.textContent = `@${state.gameTarget}`;
+            elements.gameTitle.textContent = '🎮 Найди за 5 секунд!';
+            elements.gameResult.classList.add('hidden');
+            elements.gameTimer.classList.remove('warning');
+            elements.gameOverlay.classList.add('active');
+            
+            let timeLeft = CONFIG.GAME_DURATION;
+            elements.gameTimer.textContent = (timeLeft / 1000).toFixed(1);
+            
+            state.gameTimer = setInterval(() => {
+                timeLeft -= 100;
+                elements.gameTimer.textContent = (timeLeft / 1000).toFixed(1);
+                if (timeLeft <= 1500) elements.gameTimer.classList.add('warning');
+                if (timeLeft <= 0) endGame(false);
+            }, 100);
+            
+            setTimeout(() => elements.gameOverlay.classList.remove('active'), 2000);
+        }
+
+        function checkGameAnswer(username) {
+            if (username.toLowerCase() === state.gameTarget.toLowerCase()) {
+                endGame(true);
+            }
+        }
+
+        function endGame(won) {
+            clearInterval(state.gameTimer);
+            state.isGameActive = false;
+            elements.gameModeBtn.classList.remove('active');
+            
+            elements.gameOverlay.classList.add('active');
+            elements.gameTitle.textContent = won ? '🎉 Победа!' : '😢 Время вышло!';
+            elements.gameTimer.textContent = '';
+            elements.gameResult.classList.remove('hidden');
+            elements.gameResult.className = `game-result ${won ? 'win' : 'lose'}`;
+            elements.gameResult.innerHTML = `
+                <h3>${won ? 'Отлично!' : 'Попробуй ещё раз!'}</h3>
+                <p>Искали: @${state.gameTarget}</p>
+            `;
+            
+            const targetCard = document.querySelector(`[data-username="${state.gameTarget.toLowerCase()}"]`);
+            if (targetCard) {
+                targetCard.classList.add('found');
+                setTimeout(() => targetCard.classList.remove('found'), 3000);
+            }
+        }
+
+        function closeGame() {
+            clearInterval(state.gameTimer);
+            state.isGameActive = false;
+            elements.gameModeBtn.classList.remove('active');
+            elements.gameOverlay.classList.remove('active');
+        }
+
+        // === UTILS ===
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        }
+
+        // Make openAddModal global for onclick
+        window.openAddModal = openAddModal;
+    </script>
+</body>
+</html>
