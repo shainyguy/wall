@@ -107,7 +107,7 @@ async function loadFollowers() {
         console.warn('Could not load followers.json, using fallback data');
         state.followers = generateFallbackFollowers(100);
         state.meta = {
-            username: 'your_instagram',
+            username: 'medvedev.tech',
             todayAdded: 12,
             lastUpdated: new Date().toISOString()
         };
