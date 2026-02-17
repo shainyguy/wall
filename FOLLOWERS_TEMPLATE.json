@@ -8,22 +8,22 @@
   "followers": [
     {
       "id": 1,
-      "username": "СЮДА_НИК_БЕЗ_СОБАКИ",
-      "displayName": "Имя (необязательно)",
-      "avatarUrl": "ссылка на аватар или оставь пустым",
+      "username": "witlesss",
+      "displayName": "",
+      "avatarUrl": "",
       "addedAt": "2025-01-15",
       "isNew": true
     },
     
 
-    {"id": 2, "username": "follower_2", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
-    {"id": 3, "username": "follower_3", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
-    {"id": 4, "username": "follower_4", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
-    {"id": 5, "username": "follower_5", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
-    {"id": 6, "username": "follower_6", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
-    {"id": 7, "username": "follower_7", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
-    {"id": 8, "username": "follower_8", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
-    {"id": 9, "username": "follower_9", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
-    {"id": 10, "username": "follower_10", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false}
+    {"id": 2, "username": "astrey.store", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
+    {"id": 3, "username": "y_biryukova00", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
+    {"id": 4, "username": "alenchik_sergeevna_", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
+    {"id": 5, "username": "yulya485", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-15", "isNew": true},
+    {"id": 6, "username": "odnodvorccev", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
+    {"id": 7, "username": "yazykovamary", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
+    {"id": 8, "username": "elena.48rus_", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
+    {"id": 9, "username": "80i90v", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false},
+    {"id": 10, "username": "lunataro.bot", "displayName": "", "avatarUrl": "", "addedAt": "2025-01-14", "isNew": false}
   ]
 }
