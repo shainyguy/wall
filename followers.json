@@ -9,15 +9,15 @@
   "followers": [
     {
       "id": 1,
-      "username": "example_user_1",
-      "displayName": "Пример",
+      "username": "witlessss",
+      "displayName": "witlessss",
       "avatarUrl": "",
       "addedAt": "2025-01-15",
       "isNew": true
     },
     {
       "id": 2,
-      "username": "example_user_2",
+      "username": "astrey.store",
       "displayName": "",
       "avatarUrl": "",
       "addedAt": "2025-01-15",
@@ -25,7 +25,7 @@
     },
     {
       "id": 3,
-      "username": "example_user_3",
+      "username": "y_biryukova00",
       "displayName": "",
       "avatarUrl": "",
       "addedAt": "2025-01-14",
