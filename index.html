@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="Интерактивная стена подписчиков Instagram. Найди себя на стене или подпишись, чтобы попасть!">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Стена Подписчиков | Living Wall">
+    <meta property="og:description" content="Интерактивная стена всех подписчиков. Найди себя!">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👥</text></svg>">
+    
+    <title>Стена Подписчиков | Instagram Followers Wall</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Intro Animation Overlay -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-logo">👥</div>
+        <h2 class="intro-title">Загружаем твоих<br>подписчиков...</h2>
+        <div class="intro-loader">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Particle Background Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <div class="logo-icon">👥</div>
+                        <div class="logo-text">
+                            <h1>Followers Wall</h1>
+                            <span>Живая стена подписчиков</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Badges -->
+                <div class="stats-container">
+                    <div class="stat-badge">
+                        <span class="icon">👥</span>
+                        <span class="count" id="followerCount">0</span>
+                        <span>подписчиков</span>
+                    </div>
+                    <div class="stat-badge new-today">
+                        <span class="icon">✨</span>
+                        <span class="count" id="todayCount">0</span>
+                        <span>сегодня</span>
+                    </div>
+                </div>
+                
+                <!-- Search -->
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            id="searchInput"
+                            placeholder="Найди себя на стене..."
+                            autocomplete="off"
+                            autocapitalize="off"
+                            spellcheck="false"
+                        >
+                        <span class="search-icon">🔍</span>
+                        <button class="search-clear" id="searchClear">✕</button>
+                    </div>
+                    <div class="search-result-message" id="searchMessage">
+                        <div class="search-message-content"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Wall Area -->
+        <main class="wall-container">
+            <div class="wall-wrapper" id="wallWrapper">
+                <div class="followers-wall" id="followersWall">
+                    <!-- Follower cards will be rendered here by JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Game Mode Button -->
+        <button class="game-mode-btn" id="gameModeBtn" title="Режим игры: Найди за 3 секунды">
+            🎮
+        </button>
+
+        <!-- Zoom Controls -->
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomIn" title="Приблизить">+</button>
+            <div class="zoom-level" id="zoomLevel">100%</div>
+            <button class="zoom-btn" id="zoomOut" title="Отдалить">−</button>
+        </div>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <p class="cta-text">
+                    <strong>Хочешь попасть на стену?</strong> 
+                    Подпишись и увидь своё имя здесь! ✨
+                </p>
+                <a href="#" class="cta-button" id="ctaButton">
+                    <span class="icon">📸</span>
+                    <span>Подписаться в Instagram</span>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Game Overlay -->
+    <div class="game-overlay" id="gameOverlay">
+        <h2 class="game-title" id="gameTitle">🎮 Найди за 3 секунды!</h2>
+        <div class="game-target" id="gameTarget">@username</div>
+        <div class="game-timer" id="gameTimer">3.0</div>
+        <div class="game-result hidden" id="gameResult">
+            <h3>Результат</h3>
+        </div>
+        <button class="game-close-btn" id="gameCloseBtn">Закрыть</button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
