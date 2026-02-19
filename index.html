@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#030308">
+    <meta name="description" content="Космическая стена подписчиков @medvedev.tech — найди себя в космосе!">
+    <meta property="og:title" content="🚀 Космическая Стена @medvedev.tech">
+    <meta property="og:description" content="Интерактивная 3D стена подписчиков. Найди себя в космосе!">
+    <meta property="og:type" content="website">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    
+    <title>🚀 Космическая Стена @medvedev.tech</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg-void: #030308;
+            --bg-space: #0a0a15;
+            --bg-nebula: #12122a;
+            --bg-card: rgba(20, 20, 50, 0.7);
+            --bg-glass: rgba(10, 10, 30, 0.9);
+            
+            --accent-1: #a855f7;
+            --accent-2: #ec4899;
+            --accent-3: #6366f1;
+            --accent-4: #22d3ee;
+            --accent-5: #10b981;
+            --accent-6: #f59e0b;
+            
+            --glow-1: rgba(168, 85, 247, 0.6);
+            --glow-2: rgba(236, 72, 153, 0.6);
+            
+            --text-bright: #ffffff;
+            --text-dim: rgba(255,255,255,0.7);
+            --text-muted: rgba(255,255,255,0.4);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        [data-theme="purple"] { --accent-1: #a855f7; --accent-2: #ec4899; }
+        [data-theme="cyan"] { --accent-1: #22d3ee; --accent-2: #3b82f6; }
+        [data-theme="green"] { --accent-1: #10b981; --accent-2: #22d3ee; }
+        [data-theme="orange"] { --accent-1: #f59e0b; --accent-2: #ef4444; }
+        [data-theme="pink"] { --accent-1: #ec4899; --accent-2: #8b5cf6; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html { 
+            font-size: 16px; 
+            scroll-behavior: smooth;
+            overscroll-behavior: none;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-void);
+            color: var(--text-bright);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* === КОСМИЧЕСКИЙ ФОН === */
+        .cosmos {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        #starsCanvas {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .nebula-layer {
+            position: absolute;
+            inset: -50%;
+            z-index: 2;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 60%);
+            animation: nebulaFloat 30s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes nebulaFloat {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            100% { transform: translate(3%, 2%) rotate(5deg) scale(1.05); }
+        }
+
+        .shooting-stars {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.9), transparent);
+            border-radius: 2px;
+            animation: shoot 4s linear infinite;
+            opacity: 0;
+        }
+
+        .shooting-star:nth-child(1) { top: 15%; left: 5%; animation-delay: 0s; }
+        .shooting-star:nth-child(2) { top: 35%; left: 45%; animation-delay: 2.5s; }
+        .shooting-star:nth-child(3) { top: 55%; left: 25%; animation-delay: 5s; }
+
+        @keyframes shoot {
+            0% { transform: translateX(0) rotate(-45deg); opacity: 0; }
+            5% { opacity: 1; }
+            15% { transform: translateX(250px) rotate(-45deg); opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        /* === 3D ПРОСТРАНСТВО === */
+        .space-viewport {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .space-viewport:active { cursor: grabbing; }
+
+        .space-universe {
+            position: absolute;
+            width: 400vmax;
+            height: 400vmax;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .follower-orb {
+            position: absolute;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .follower-orb .card-inner {
+            padding: 0.75rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-md);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-width: 80px;
+        }
+
+        .follower-orb .card-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .follower-orb:active {
+            transform: scale(1.1) !important;
+        }
+
+        .follower-orb:active .card-inner {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 25px var(--glow-1);
+        }
+
+        @media (hover: hover) {
+            .follower-orb:hover {
+                z-index: 1000 !important;
+            }
+            .follower-orb:hover .card-inner {
+                border-color: var(--accent-1);
+                box-shadow: 0 0 30px var(--glow-1), 0 15px 35px rgba(0,0,0,0.5);
+                transform: scale(1.12);
+            }
+        }
+
+        .follower-orb.highlighted .card-inner {
+            animation: orbPulse 2s ease-in-out infinite;
+            border-color: var(--accent-4);
+        }
+
+        .follower-orb.found .card-inner {
+            animation: orbFound 0.8s ease-out forwards;
+            border-color: var(--accent-5);
+            box-shadow: 0 0 40px var(--accent-5), 0 0 80px var(--accent-5);
+        }
+
+        .follower-orb.fod .card-inner {
+            border: 2px solid gold;
+            box-shadow: 0 0 25px rgba(255,215,0,0.5);
+        }
+
+        .follower-orb.fod::before {
+            content: '👑';
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            z-index: 10;
+            filter: drop-shadow(0 0 8px gold);
+            animation: crownBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes crownBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-8px); }
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { box-shadow: 0 0 15px var(--accent-4); }
+            50% { box-shadow: 0 0 40px var(--accent-4); }
+        }
+
+        @keyframes orbFound {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1.2); }
+        }
+
+        .orb-avatar {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .orb-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .orb-avatar .rank {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, gold, #ff8c00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5rem;
+            font-weight: 800;
+            color: #000;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.5);
+        }
+
+        .orb-username {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70px;
+        }
+
+        .orb-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            padding: 2px 6px;
+            font-size: 0.45rem;
+            font-weight: 700;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .orb-badge.new {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            animation: badgePulse 1.5s ease-in-out infinite;
+        }
+
+        .orb-badge.og {
+            background: linear-gradient(135deg, gold, #ff8c00);
+            color: #000;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* === UI ПАНЕЛЬ === */
+        .ui-layer {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            pointer-events: none;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+        }
+
+        .ui-layer > * {
+            pointer-events: auto;
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 0.75rem;
+            padding-top: calc(0.75rem + var(--safe-top));
+            background: linear-gradient(180deg, var(--bg-glass) 0%, rgba(10,10,30,0.7) 70%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px var(--glow-1);
+        }
+
+        .logo-text h1 {
+            font-size: 1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, var(--accent-4));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text span {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .theme-pills {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .theme-pill {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-pill:active { transform: scale(0.9); }
+        .theme-pill.active { border-color: #fff; box-shadow: 0 0 12px currentColor; }
+        .theme-pill[data-theme="purple"] { background: linear-gradient(135deg, #a855f7, #ec4899); }
+        .theme-pill[data-theme="cyan"] { background: linear-gradient(135deg, #22d3ee, #3b82f6); }
+        .theme-pill[data-theme="green"] { background: linear-gradient(135deg, #10b981, #22d3ee); }
+        .theme-pill[data-theme="orange"] { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .theme-pill[data-theme="pink"] { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
+
+        .stats-row {
+            display: flex;
+            gap: 0.4rem;
+            overflow-x: auto;
+            padding-bottom: 0.2rem;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .stats-row::-webkit-scrollbar { display: none; }
+
+        .stat-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.35rem 0.7rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .stat-chip:active {
+            background: rgba(255,255,255,0.12);
+            transform: scale(0.95);
+        }
+
+        .stat-chip .value {
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-chip.live::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            background: var(--accent-5);
+            border-radius: 50%;
+            animation: livePulse 1.5s infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.7); }
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.7rem 0.9rem 0.7rem 2.4rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: var(--text-bright);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-input::placeholder { color: var(--text-muted); }
+
+        .search-input:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 0 3px rgba(168,85,247,0.15);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-dim);
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+            font-size: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-clear.show { opacity: 1; }
+        .search-clear:active { background: var(--accent-2); color: #fff; }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            position: absolute;
+            top: auto;
+            bottom: calc(70px + var(--safe-bottom));
+            left: 0.75rem;
+            right: 0.75rem;
+            display: flex;
+            gap: 0.3rem;
+            overflow-x: auto;
+            padding: 0.4rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255,255,255,0.1);
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .nav-tab {
+            padding: 0.45rem 0.8rem;
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .nav-tab:active { transform: scale(0.95); }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Panels */
+        .panel {
+            position: absolute;
+            top: 130px;
+            left: 0.75rem;
+            right: 0.75rem;
+            bottom: calc(130px + var(--safe-bottom));
+            background: var(--bg-glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(15px);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .panel-content {
+            height: 100%;
+            overflow-y: auto;
+            padding: 1rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .panel-content::-webkit-scrollbar { width: 3px; }
+        .panel-content::-webkit-scrollbar-thumb { background: var(--accent-1); border-radius: 3px; }
+
+        /* Leaderboard */
+        .leader-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .leader-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .leader-item:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.98);
+        }
+
+        .leader-item.gold { border-color: gold; background: rgba(255,215,0,0.1); }
+        .leader-item.silver { border-color: silver; background: rgba(192,192,192,0.08); }
+        .leader-item.bronze { border-color: #cd7f32; background: rgba(205,127,50,0.08); }
+
+        .leader-rank {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .leader-item.gold .leader-rank { background: linear-gradient(135deg, gold, #ff8c00); color: #000; }
+        .leader-item.silver .leader-rank { background: linear-gradient(135deg, silver, #888); color: #000; }
+        .leader-item.bronze .leader-rank { background: linear-gradient(135deg, #cd7f32, #8b4513); }
+        .leader-rank { background: var(--bg-card); }
+
+        .leader-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .leader-info { flex: 1; min-width: 0; }
+        .leader-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .leader-date { font-size: 0.65rem; color: var(--text-muted); }
+        .leader-badge { font-size: 1.2rem; flex-shrink: 0; }
+
+        /* Roulette */
+        .roulette {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 0.5rem;
+            text-align: center;
+        }
+
+        .roulette-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .roulette-wheel {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, var(--bg-space) 0%, var(--bg-void) 100%);
+            box-shadow: 0 0 30px var(--glow-1), inset 0 0 20px rgba(168,85,247,0.2);
+            margin-bottom: 1.2rem;
+        }
+
+        .roulette-pointer {
+            position: absolute;
+            top: -12px;
+            font-size: 1.4rem;
+            filter: drop-shadow(0 0 8px var(--accent-1));
+        }
+
+        .roulette-inner {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        .roulette-inner.spin {
+            animation: rouletteSpin 3s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+        }
+
+        @keyframes rouletteSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(calc(1800deg + var(--final, 0deg))); }
+        }
+
+        .roulette-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .roulette-result {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            min-height: 1.3rem;
+        }
+
+        .roulette-btn {
+            padding: 0.75rem 1.8rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            border: none;
+            border-radius: 25px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px var(--glow-1);
+        }
+
+        .roulette-btn:active { transform: scale(0.95); }
+        .roulette-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.4rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.04);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.25rem;
+            top: 1rem;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-1);
+        }
+
+        .timeline-date {
+            font-size: 0.7rem;
+            color: var(--accent-4);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .timeline-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .timeline-user {
+            padding: 0.2rem 0.5rem;
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            font-size: 0.6rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Stats Chart */
+        .chart-wrapper {
+            background: rgba(255,255,255,0.04);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 120px;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+        }
+
+        /* Side Controls */
+        .side-controls {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .control-btn:active {
+            transform: scale(0.9);
+            background: var(--accent-1);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        }
+
+        /* Zoom indicator */
+        .zoom-indicator {
+            position: absolute;
+            bottom: calc(140px + var(--safe-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .zoom-indicator.show { opacity: 1; }
+
+        /* Footer CTA */
+        .footer-cta {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.75rem;
+            padding-bottom: calc(0.75rem + var(--safe-bottom));
+            background: linear-gradient(0deg, var(--bg-glass) 0%, rgba(10,10,30,0.8) 80%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .footer-text strong { color: #fff; }
+
+        .footer-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .cta-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cta-btn.instagram {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .cta-btn.telegram {
+            background: linear-gradient(135deg, #0088cc, #229ED9);
+        }
+
+        .cta-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Fireworks */
+        #fireworksCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--bg-space);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.show .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-target {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-4);
+            margin-bottom: 0.8rem;
+        }
+
+        .modal-timer {
+            font-size: 3rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .modal-timer.warning { color: var(--accent-2); }
+
+        .modal-result { margin-top: 0.8rem; }
+        .modal-result.win { color: var(--accent-5); }
+        .modal-result.lose { color: var(--accent-2); }
+
+        .modal-close {
+            margin-top: 1.2rem;
+            padding: 0.7rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-close:active { background: rgba(255,255,255,0.2); }
+
+        /* Intro */
+        .intro-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-void);
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            transition: opacity 0.6s, visibility 0.6s;
+        }
+
+        .intro-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .intro-icon {
+            font-size: 4rem;
+            animation: introFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes introFloat {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        .intro-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .intro-dots {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .intro-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-1);
+            border-radius: 50%;
+            animation: dotBounce 1.4s ease-in-out infinite;
+        }
+
+        .intro-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .intro-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Touch hint */
+        .touch-hint {
+            position: fixed;
+            bottom: calc(200px + var(--safe-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 1rem;
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            z-index: 90;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .touch-hint.show { opacity: 1; }
+
+        .hidden { display: none !important; }
+
+        /* Large screens */
+        @media (min-width: 768px) {
+            .header { padding: 1rem 1.5rem; }
+            .logo-icon { width: 48px; height: 48px; font-size: 1.4rem; }
+            .logo-text h1 { font-size: 1.2rem; }
+            .orb-avatar { width: 56px; height: 56px; font-size: 1.4rem; }
+            .orb-username { font-size: 0.75rem; max-width: 85px; }
+            .follower-orb .card-inner { padding: 1rem; min-width: 95px; }
+            .nav-tabs { left: 50%; right: auto; transform: translateX(-50%); max-width: 500px; }
+            .panel { max-width: 450px; left: 50%; right: auto; transform: translateX(-50%); }
+            .panel.active { transform: translateX(-50%) translateY(0); }
+            .side-controls { right: 1.5rem; }
+            .control-btn { width: 50px; height: 50px; font-size: 1.3rem; }
+        }
+
+        @media (min-width: 1024px) {
+            .orb-avatar { width: 64px; height: 64px; }
+            .orb-username { font-size: 0.8rem; max-width: 100px; }
+        }
+
+        /* Landscape phone */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header { padding: 0.5rem 0.75rem; gap: 0.4rem; }
+            .logo-icon { width: 32px; height: 32px; font-size: 1rem; }
+            .logo-text h1 { font-size: 0.9rem; }
+            .logo-text span { display: none; }
+            .stats-row { gap: 0.3rem; }
+            .stat-chip { padding: 0.25rem 0.5rem; font-size: 0.6rem; }
+            .search-input { padding: 0.5rem 0.7rem 0.5rem 2rem; font-size: 0.8rem; }
+            .nav-tabs { bottom: calc(55px + var(--safe-bottom)); padding: 0.3rem; }
+            .nav-tab { padding: 0.35rem 0.6rem; font-size: 0.6rem; }
+            .panel { top: 90px; bottom: calc(100px + var(--safe-bottom)); }
+            .footer-cta { padding: 0.5rem; gap: 0.3rem; }
+            .footer-text { font-size: 0.65rem; }
+            .cta-btn { padding: 0.45rem 0.8rem; font-size: 0.65rem; }
+            .side-controls { gap: 0.3rem; }
+            .control-btn { width: 36px; height: 36px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body data-theme="purple">
+    <!-- Intro -->
+    <div class="intro-screen" id="intro">
+        <div class="intro-icon">🚀</div>
+        <h2 class="intro-title">@medvedev.tech</h2>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">Загружаем космос...</p>
+        <div class="intro-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- Cosmos Background -->
+    <div class="cosmos">
+        <canvas id="starsCanvas"></canvas>
+        <div class="nebula-layer"></div>
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+    </div>
+
+    <!-- 3D Space -->
+    <div class="space-viewport" id="viewport">
+        <div class="space-universe" id="universe"></div>
+    </div>
+
+    <!-- Fireworks -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- UI Layer -->
+    <div class="ui-layer">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <a href="https://instagram.com/medvedev.tech" target="_blank" class="logo">
+                    <div class="logo-icon">🚀</div>
+                    <div class="logo-text">
+                        <h1>@medvedev.tech</h1>
+                        <span>Космическая стена</span>
+                    </div>
+                </a>
+                <div class="theme-pills">
+                    <button class="theme-pill active" data-theme="purple"></button>
+                    <button class="theme-pill" data-theme="cyan"></button>
+                    <button class="theme-pill" data-theme="green"></button>
+                    <button class="theme-pill" data-theme="orange"></button>
+                    <button class="theme-pill" data-theme="pink"></button>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-chip" onclick="showPanel('space')">
+                    <span>🚀</span>
+                    <span class="value" id="totalCount">0</span>
+                    <span>в космосе</span>
+                </div>
+                <div class="stat-chip live">
+                    <span class="value" id="newCount">0</span>
+                    <span>новых</span>
+                </div>
+                <div class="stat-chip">
+                    <span>🔥</span>
+                    <span class="value" id="streakCount">0</span>
+                    <span>дней</span>
+                </div>
+                <div class="stat-chip" onclick="showPanel('leaderboard')">
+                    <span>🏆</span>
+                    <span>ТОП</span>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Найди себя в космосе..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                <button class="search-clear" id="searchClear">✕</button>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-panel="space">🌌 Космос</button>
+            <button class="nav-tab" data-panel="leaderboard">🏆 ТОП</button>
+            <button class="nav-tab" data-panel="roulette">🎰 Рулетка</button>
+            <button class="nav-tab" data-panel="timeline">🗓️ История</button>
+            <button class="nav-tab" data-panel="stats">📈 Рост</button>
+        </nav>
+
+        <!-- Panels -->
+        <div class="panel" id="panelLeaderboard">
+            <div class="panel-content">
+                <div class="leader-list" id="leaderList"></div>
+            </div>
+        </div>
+
+        <div class="panel" id="panelRoulette">
+            <div class="panel-content">
+                <div class="roulette">
+                    <h2 class="roulette-title">🎰 Космическая рулетка</h2>
+                    <div class="roulette-wheel">
+                        <div class="roulette-pointer">▼</div>
+                        <div class="roulette-inner" id="rouletteInner">
+                            <div class="roulette-avatar" id="rouletteAvatar">?</div>
+                        </div>
+                    </div>
+                    <div class="roulette-result" id="rouletteResult">Нажми кнопку!</div>
+                    <button class="roulette-btn" id="rouletteBtn">🎲 Крутить!</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" id="panelTimeline">
+            <div class="panel-content">
+                <div class="timeline" id="timeline"></div>
+            </div>
+        </div>
+
+        <div class="panel" id="panelStats">
+            <div class="panel-content">
+                <div class="chart-wrapper">
+                    <h3 class="chart-title">📈 Покорение космоса</h3>
+                    <svg class="chart-svg" id="chartSvg" viewBox="0 0 300 120"></svg>
+                    <div class="chart-labels">
+                        <span>7 дней назад</span>
+                        <span>Сегодня</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Controls -->
+        <div class="side-controls">
+            <button class="control-btn" id="gameBtn" title="Игра">🎮</button>
+            <button class="control-btn" id="soundBtn" title="Звук">🔇</button>
+            <button class="control-btn" id="shuffleBtn" title="Перемешать">🔀</button>
+            <button class="control-btn" id="zoomInBtn" title="Приблизить">+</button>
+            <button class="control-btn" id="zoomOutBtn" title="Отдалить">−</button>
+        </div>
+
+        <!-- Zoom indicator -->
+        <div class="zoom-indicator" id="zoomIndicator">100%</div>
+
+        <!-- Footer -->
+        <footer class="footer-cta">
+            <p class="footer-text"><strong>Хочешь в космос?</strong> Подпишись! 🚀</p>
+            <div class="footer-btns">
+                <a href="https://instagram.com/medvedev.tech" target="_blank" class="cta-btn instagram">📸 Instagram</a>
+                <a href="https://t.me/medvedevtech" target="_blank" class="cta-btn telegram">✈️ Telegram</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Touch hint -->
+    <div class="touch-hint" id="touchHint">👆 Двигай пальцем · 🤏 Сжимай для зума</div>
+
+    <!-- Game Modal -->
+    <div class="modal-overlay" id="gameModal">
+        <div class="modal-box">
+            <h2 class="modal-title" id="gameTitle">🎮 Найди за 5 сек!</h2>
+            <div class="modal-target" id="gameTarget">@username</div>
+            <div class="modal-timer" id="gameTimer">5.0</div>
+            <div class="modal-result hidden" id="gameResult"></div>
+            <button class="modal-close" onclick="closeGame()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- FOD Modal -->
+    <div class="modal-overlay" id="fodModal">
+        <div class="modal-box">
+            <h2 class="modal-title">👑 Космонавт дня</h2>
+            <div class="roulette-avatar" id="fodAvatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0.8rem auto;"></div>
+            <div id="fodName" style="font-size: 1.3rem; font-weight: 700; margin-bottom: 0.4rem;"></div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Выбран звёздами сегодня!</p>
+            <a id="fodLink" href="#" target="_blank" class="cta-btn instagram" style="margin-top: 0.8rem; display: inline-flex;">Открыть профиль</a>
+            <button class="modal-close" onclick="closeFod()">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 🚀 COSMIC WALL @medvedev.tech v6.0
+         * Full Mobile Support with Gestures
+         */
+
+        const CONFIG = {
+            JSON_URL: 'followers.json',
+            INSTAGRAM: 'https://instagram.com/medvedev.tech',
+            TELEGRAM: 'https://t.me/medvedevtech',
+            INTRO_MS: 1800,
+            GAME_TIME: 5000,
+            HINT_MS: 4000,
+            MIN_ZOOM: 0.3,
+            MAX_ZOOM: 3,
+            MILESTONES: [10, 50, 100, 250, 500, 1000, 2500, 5000]
+        };
+
+        const state = {
+            followers: [],
+            soundOn: false,
+            // Transform state
+            scale: 1,
+            offsetX: 0,
+            offsetY: 0,
+            // Drag state
+            isDragging: false,
+            dragStartX: 0,
+            dragStartY: 0,
+            lastOffsetX: 0,
+            lastOffsetY: 0,
+            // Velocity for inertia
+            velocityX: 0,
+            velocityY: 0,
+            lastMoveTime: 0,
+            lastMoveX: 0,
+            lastMoveY: 0,
+            // Pinch zoom
+            initialPinchDistance: 0,
+            initialScale: 1,
+            pinchCenterX: 0,
+            pinchCenterY: 0,
+            // Game
+            gameActive: false,
+            gameTarget: null,
+            gameInterval: null,
+            // FOD
+            fod: null,
+            // Animation
+            animationFrame: null
+        };
+
+        // === INIT ===
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadFollowers();
+            initStars();
+            renderUniverse();
+            renderLeaderboard();
+            renderTimeline();
+            renderChart();
+            setupEvents();
+            setupGestures();
+            setupShake();
+            updateStreak();
+            checkFOD();
+            checkMilestones();
+
+            setTimeout(() => {
+                document.getElementById('intro').classList.add('hide');
+                showTouchHint();
+            }, CONFIG.INTRO_MS);
+        });
+
+        // === LOAD DATA ===
+        async function loadFollowers() {
+            try {
+                const res = await fetch(CONFIG.JSON_URL + '?t=' + Date.now());
+                if (res.ok) {
+                    const data = await res.json();
+                    state.followers = data.followers || [];
+                }
+            } catch (e) {
+                console.warn('JSON load error:', e);
+            }
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = state.followers.length;
+            document.getElementById('newCount').textContent = state.followers.filter(f => f.isNew).length;
+        }
+
+        // === STARS ===
+        let stars = [];
+        let starsCtx;
+
+        function initStars() {
+            const canvas = document.getElementById('starsCanvas');
+            starsCtx = canvas.getContext('2d');
+            resizeCanvas();
+            createStars();
+            animateStars();
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        function resizeCanvas() {
+            const canvas = document.getElementById('starsCanvas');
+            const fw = document.getElementById('fireworksCanvas');
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+            starsCtx.scale(dpr, dpr);
+            
+            fw.width = window.innerWidth * dpr;
+            fw.height = window.innerHeight * dpr;
+            fw.style.width = window.innerWidth + 'px';
+            fw.style.height = window.innerHeight + 'px';
+            
+            createStars();
+        }
+
+        function createStars() {
+            stars = [];
+            const count = Math.min(200, Math.floor(window.innerWidth * window.innerHeight / 5000));
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    size: Math.random() * 1.5 + 0.5,
+                    twinkle: Math.random() * Math.PI * 2,
+                    speed: Math.random() * 0.015 + 0.005
+                });
+            }
+        }
+
+        function animateStars() {
+            starsCtx.fillStyle = 'rgba(3, 3, 8, 0.2)';
+            starsCtx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+            stars.forEach(s => {
+                s.twinkle += s.speed;
+                const alpha = 0.4 + Math.sin(s.twinkle) * 0.35;
+                starsCtx.beginPath();
+                starsCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                starsCtx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                starsCtx.fill();
+            });
+
+            requestAnimationFrame(animateStars);
+        }
+
+        // === RENDER UNIVERSE ===
+        function renderUniverse() {
+            const universe = document.getElementById('universe');
+            universe.innerHTML = '';
+
+            if (state.followers.length === 0) {
+                universe.innerHTML = `
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: var(--text-muted);">
+                        <div style="font-size: 3rem; margin-bottom: 0.8rem;">🌌</div>
+                        <h3 style="font-size: 1rem;">Космос пуст...</h3>
+                        <p style="font-size: 0.8rem;">Добавь подписчиков в followers.json</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const size = Math.max(window.innerWidth, window.innerHeight) * 2;
+            const centerX = size / 2;
+            const centerY = size / 2;
+
+            state.followers.forEach((f, i) => {
+                const orb = document.createElement('div');
+                orb.className = 'follower-orb';
+                orb.dataset.username = f.username.toLowerCase();
+                orb.dataset.index = i;
+
+                // Badges
+                if (f.isNew) {
+                    const badge = document.createElement('span');
+                    badge.className = 'orb-badge new';
+                    badge.textContent = 'NEW';
+                    orb.appendChild(badge);
+                } else if (i < 10) {
+                    const badge = document.createElement('span');
+                    badge.className = 'orb-badge og';
+                    badge.textContent = 'OG';
+                    orb.appendChild(badge);
+                }
+
+                if (f.username === state.fod) {
+                    orb.classList.add('fod');
+                }
+
+                // Spiral distribution
+                const angle = (i / state.followers.length) * Math.PI * 8 + Math.random() * 0.3;
+                const radius = 80 + (i / state.followers.length) * (size * 0.35) + Math.random() * 60;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius * 0.8;
+
+                orb.style.left = x + 'px';
+                orb.style.top = y + 'px';
+
+                // Card inner
+                const inner = document.createElement('div');
+                inner.className = 'card-inner';
+
+                // Avatar
+                const avatar = document.createElement('div');
+                avatar.className = 'orb-avatar';
+                if (f.avatarUrl) {
+                    avatar.innerHTML = `<img src="${f.avatarUrl}" alt="${f.username}" loading="lazy">`;
+                } else {
+                    avatar.textContent = f.username[0].toUpperCase();
+                    const hue = hashStr(f.username) % 360;
+                    avatar.style.background = `linear-gradient(135deg, hsl(${hue},70%,50%), hsl(${(hue+40)%360},70%,40%))`;
+                }
+
+                if (i < 3) {
+                    const rank = document.createElement('span');
+                    rank.className = 'rank';
+                    rank.textContent = ['🥇','🥈','🥉'][i];
+                    avatar.appendChild(rank);
+                }
+
+                // Username
+                const uname = document.createElement('div');
+                uname.className = 'orb-username';
+                uname.textContent = '@' + f.username;
+
+                inner.appendChild(avatar);
+                inner.appendChild(uname);
+                orb.appendChild(inner);
+
+                // Click handler
+                orb.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    handleOrbClick(f);
+                });
+
+                universe.appendChild(orb);
+            });
+
+            // Center view initially
+            state.offsetX = -centerX + window.innerWidth / 2;
+            state.offsetY = -centerY + window.innerHeight / 2;
+            updateTransform();
+        }
+
+        function handleOrbClick(f) {
+            playSound('click');
+            if (state.gameActive) {
+                checkGameAnswer(f.username);
+            } else if (f.username === state.fod) {
+                showFODModal(f);
+            } else {
+                window.open(`https://instagram.com/${f.username}`, '_blank');
+            }
+        }
+
+        // === GESTURES ===
+        function setupGestures() {
+            const vp = document.getElementById('viewport');
+
+            // Mouse events
+            vp.addEventListener('mousedown', handleMouseDown);
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+
+            // Touch events
+            vp.addEventListener('touchstart', handleTouchStart, { passive: false });
+            vp.addEventListener('touchmove', handleTouchMove, { passive: false });
+            vp.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+            // Wheel zoom
+            vp.addEventListener('wheel', handleWheel, { passive: false });
+
+            // Start inertia loop
+            requestAnimationFrame(updateInertia);
+        }
+
+        // Mouse handlers
+        function handleMouseDown(e) {
+            if (e.target.closest('.ui-layer') || e.target.closest('.follower-orb')) return;
+            
+            state.isDragging = true;
+            state.dragStartX = e.clientX;
+            state.dragStartY = e.clientY;
+            state.lastOffsetX = state.offsetX;
+            state.lastOffsetY = state.offsetY;
+            state.velocityX = 0;
+            state.velocityY = 0;
+            state.lastMoveTime = Date.now();
+            state.lastMoveX = e.clientX;
+            state.lastMoveY = e.clientY;
+        }
+
+        function handleMouseMove(e) {
+            if (!state.isDragging) return;
+            
+            const now = Date.now();
+            const dt = now - state.lastMoveTime;
+            
+            if (dt > 0) {
+                state.velocityX = (e.clientX - state.lastMoveX) / dt * 16;
+                state.velocityY = (e.clientY - state.lastMoveY) / dt * 16;
+            }
+            
+            state.lastMoveTime = now;
+            state.lastMoveX = e.clientX;
+            state.lastMoveY = e.clientY;
+            
+            state.offsetX = state.lastOffsetX + (e.clientX - state.dragStartX);
+            state.offsetY = state.lastOffsetY + (e.clientY - state.dragStartY);
+            updateTransform();
+        }
+
+        function handleMouseUp() {
+            state.isDragging = false;
+        }
+
+        // Touch handlers
+        function handleTouchStart(e) {
+            if (e.target.closest('.ui-layer')) return;
+            
+            if (e.touches.length === 1 && !e.target.closest('.follower-orb')) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                state.isDragging = true;
+                state.dragStartX = touch.clientX;
+                state.dragStartY = touch.clientY;
+                state.lastOffsetX = state.offsetX;
+                state.lastOffsetY = state.offsetY;
+                state.velocityX = 0;
+                state.velocityY = 0;
+                state.lastMoveTime = Date.now();
+                state.lastMoveX = touch.clientX;
+                state.lastMoveY = touch.clientY;
+            } else if (e.touches.length === 2) {
+                e.preventDefault();
+                state.isDragging = false;
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                state.initialPinchDistance = getDistance(touch1, touch2);
+                state.initialScale = state.scale;
+                state.pinchCenterX = (touch1.clientX + touch2.clientX) / 2;
+                state.pinchCenterY = (touch1.clientY + touch2.clientY) / 2;
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (e.target.closest('.ui-layer')) return;
+            e.preventDefault();
+
+            if (e.touches.length === 1 && state.isDragging) {
+                const touch = e.touches[0];
+                const now = Date.now();
+                const dt = now - state.lastMoveTime;
+                
+                if (dt > 0) {
+                    state.velocityX = (touch.clientX - state.lastMoveX) / dt * 16;
+                    state.velocityY = (touch.clientY - state.lastMoveY) / dt * 16;
+                }
+                
+                state.lastMoveTime = now;
+                state.lastMoveX = touch.clientX;
+                state.lastMoveY = touch.clientY;
+                
+                state.offsetX = state.lastOffsetX + (touch.clientX - state.dragStartX);
+                state.offsetY = state.lastOffsetY + (touch.clientY - state.dragStartY);
+                updateTransform();
+            } else if (e.touches.length === 2) {
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const distance = getDistance(touch1, touch2);
+                const newCenterX = (touch1.clientX + touch2.clientX) / 2;
+                const newCenterY = (touch1.clientY + touch2.clientY) / 2;
+                
+                // Calculate new scale
+                const scaleChange = distance / state.initialPinchDistance;
+                const newScale = Math.max(CONFIG.MIN_ZOOM, Math.min(CONFIG.MAX_ZOOM, state.initialScale * scaleChange));
+                
+                // Adjust offset to zoom toward pinch center
+                const scaleDiff = newScale / state.scale;
+                state.offsetX = newCenterX - (newCenterX - state.offsetX) * scaleDiff;
+                state.offsetY = newCenterY - (newCenterY - state.offsetY) * scaleDiff;
+                
+                state.scale = newScale;
+                updateTransform();
+                showZoomIndicator();
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (e.touches.length === 0) {
+                state.isDragging = false;
+            } else if (e.touches.length === 1) {
+                // Switching from pinch to drag
+                const touch = e.touches[0];
+                state.isDragging = true;
+                state.dragStartX = touch.clientX;
+                state.dragStartY = touch.clientY;
+                state.lastOffsetX = state.offsetX;
+                state.lastOffsetY = state.offsetY;
+                state.velocityX = 0;
+                state.velocityY = 0;
+            }
+        }
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // Wheel zoom
+        function handleWheel(e) {
+            if (e.target.closest('.ui-layer')) return;
+            e.preventDefault();
+            
+            const delta = -e.deltaY * 0.001;
+            const newScale = Math.max(CONFIG.MIN_ZOOM, Math.min(CONFIG.MAX_ZOOM, state.scale * (1 + delta)));
+            
+            // Zoom toward cursor
+            const rect = document.getElementById('viewport').getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            const scaleDiff = newScale / state.scale;
+            state.offsetX = mouseX - (mouseX - state.offsetX) * scaleDiff;
+            state.offsetY = mouseY - (mouseY - state.offsetY) * scaleDiff;
+            
+            state.scale = newScale;
+            updateTransform();
+            showZoomIndicator();
+        }
+
+        // Inertia
+        function updateInertia() {
+            if (!state.isDragging && (Math.abs(state.velocityX) > 0.1 || Math.abs(state.velocityY) > 0.1)) {
+                state.velocityX *= 0.95;
+                state.velocityY *= 0.95;
+                state.offsetX += state.velocityX;
+                state.offsetY += state.velocityY;
+                updateTransform();
+            }
+            requestAnimationFrame(updateInertia);
+        }
+
+        function updateTransform() {
+            const universe = document.getElementById('universe');
+            universe.style.transform = `translate(${state.offsetX}px, ${state.offsetY}px) scale(${state.scale})`;
+        }
+
+        function showZoomIndicator() {
+            const indicator = document.getElementById('zoomIndicator');
+            indicator.textContent = Math.round(state.scale * 100) + '%';
+            indicator.classList.add('show');
+            clearTimeout(state.zoomTimeout);
+            state.zoomTimeout = setTimeout(() => indicator.classList.remove('show'), 1500);
+        }
+
+        // === EVENTS ===
+        function setupEvents() {
+            // Tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    playSound('click');
+                    showPanel(tab.dataset.panel);
+                });
+            });
+
+            // Themes
+            document.querySelectorAll('.theme-pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    playSound('click');
+                    document.body.dataset.theme = pill.dataset.theme;
+                    document.querySelectorAll('.theme-pill').forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    localStorage.setItem('theme', pill.dataset.theme);
+                });
+            });
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.dataset.theme = savedTheme;
+                document.querySelectorAll('.theme-pill').forEach(p => {
+                    p.classList.toggle('active', p.dataset.theme === savedTheme);
+                });
+            }
+
+            // Search
+            let searchTimer;
+            document.getElementById('searchInput').addEventListener('input', e => {
+                const q = e.target.value.trim();
+                document.getElementById('searchClear').classList.toggle('show', q.length > 0);
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => doSearch(q), 300);
+            });
+
+            document.getElementById('searchClear').addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('searchClear').classList.remove('show');
+                resetOrbs();
+            });
+
+            // Sound
+            document.getElementById('soundBtn').addEventListener('click', () => {
+                state.soundOn = !state.soundOn;
+                document.getElementById('soundBtn').textContent = state.soundOn ? '🔊' : '🔇';
+                if (state.soundOn) playSound('click');
+            });
+
+            // Shuffle
+            document.getElementById('shuffleBtn').addEventListener('click', shuffleWall);
+
+            // Game
+            document.getElementById('gameBtn').addEventListener('click', startGame);
+
+            // Roulette
+            document.getElementById('rouletteBtn').addEventListener('click', spinRoulette);
+
+            // Zoom buttons
+            document.getElementById('zoomInBtn').addEventListener('click', () => {
+                state.scale = Math.min(CONFIG.MAX_ZOOM, state.scale * 1.3);
+                updateTransform();
+                showZoomIndicator();
+                playSound('click');
+            });
+
+            document.getElementById('zoomOutBtn').addEventListener('click', () => {
+                state.scale = Math.max(CONFIG.MIN_ZOOM, state.scale / 1.3);
+                updateTransform();
+                showZoomIndicator();
+                playSound('click');
+            });
+        }
+
+        // === PANELS ===
+        function showPanel(name) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === name));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            if (name !== 'space') {
+                document.getElementById('panel' + name.charAt(0).toUpperCase() + name.slice(1))?.classList.add('active');
+            }
+        }
+
+        // === SEARCH ===
+        function doSearch(q) {
+            if (!q) { resetOrbs(); return; }
+            const query = q.toLowerCase().replace('@', '');
+            const orb = document.querySelector(`.follower-orb[data-username*="${query}"]`);
+
+            resetOrbs();
+            if (orb) {
+                playSound('success');
+                orb.classList.add('found');
+
+                // Navigate to orb
+                const orbX = parseFloat(orb.style.left);
+                const orbY = parseFloat(orb.style.top);
+
+                state.scale = 1.5;
+                state.offsetX = -orbX * state.scale + window.innerWidth / 2;
+                state.offsetY = -orbY * state.scale + window.innerHeight / 2;
+                updateTransform();
+
+                setTimeout(() => orb.classList.remove('found'), 3000);
+            }
+        }
+
+        function resetOrbs() {
+            document.querySelectorAll('.follower-orb').forEach(o => o.classList.remove('found', 'highlighted'));
+        }
+
+        // === SHUFFLE ===
+        function shuffleWall() {
+            playSound('click');
+            for (let i = state.followers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [state.followers[i], state.followers[j]] = [state.followers[j], state.followers[i]];
+            }
+            renderUniverse();
+        }
+
+        // === LEADERBOARD ===
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderList');
+            const top10 = state.followers.slice(0, 10);
+            const medals = ['🥇', '🥈', '🥉'];
+
+            list.innerHTML = top10.map((f, i) => {
+                const hue = hashStr(f.username) % 360;
+                const cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                return `
+                    <div class="leader-item ${cls}" onclick="window.open('https://instagram.com/${f.username}', '_blank')">
+                        <div class="leader-rank">${i + 1}</div>
+                        <div class="leader-avatar" style="background: linear-gradient(135deg, hsl(${hue},70%,50%), hsl(${(hue+40)%360},70%,40%))">
+                            ${f.username[0].toUpperCase()}
+                        </div>
+                        <div class="leader-info">
+                            <div class="leader-name">@${f.username}</div>
+                            <div class="leader-date">${f.addedAt ? 'С ' + formatDate(f.addedAt) : 'OG'}</div>
+                        </div>
+                        <div class="leader-badge">${medals[i] || '⭐'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // === ROULETTE ===
+        function spinRoulette() {
+            if (state.followers.length === 0) return;
+            
+            const btn = document.getElementById('rouletteBtn');
+            btn.disabled = true;
+            playSound('spin');
+
+            const winner = state.followers[Math.floor(Math.random() * state.followers.length)];
+            const rotation = Math.random() * 360;
+
+            document.getElementById('rouletteInner').style.setProperty('--final', rotation + 'deg');
+            document.getElementById('rouletteInner').classList.add('spin');
+            document.getElementById('rouletteResult').textContent = '🎲 Крутим...';
+
+            const hue = hashStr(winner.username) % 360;
+            const avatar = document.getElementById('rouletteAvatar');
+            avatar.textContent = winner.username[0].toUpperCase();
+            avatar.style.background = `linear-gradient(135deg, hsl(${hue},70%,50%), hsl(${(hue+40)%360},70%,40%))`;
+
+            setTimeout(() => {
+                document.getElementById('rouletteInner').classList.remove('spin');
+                document.getElementById('rouletteResult').innerHTML = `🎉 <strong>@${winner.username}</strong>`;
+                btn.disabled = false;
+                playSound('win');
+                showFireworks();
+            }, 3000);
+        }
+
+        // === TIMELINE ===
+        function renderTimeline() {
+            const tl = document.getElementById('timeline');
+            const grouped = {};
+            state.followers.forEach(f => {
+                const date = f.addedAt || 'Неизвестно';
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(f.username);
+            });
+
+            const dates = Object.keys(grouped).sort().reverse().slice(0, 7);
+
+            tl.innerHTML = dates.map(date => `
+                <div class="timeline-item">
+                    <div class="timeline-date">📅 ${formatDate(date)}</div>
+                    <div class="timeline-users">
+                        ${grouped[date].map(u => `<span class="timeline-user">@${u}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // === CHART ===
+        function renderChart() {
+            const svg = document.getElementById('chartSvg');
+            const days = 7;
+            const data = [];
+            const grouped = {};
+
+            state.followers.forEach(f => {
+                const date = f.addedAt || new Date().toISOString().split('T')[0];
+                grouped[date] = (grouped[date] || 0) + 1;
+            });
+
+            let cumulative = 0;
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(Date.now() - i * 86400000).toISOString().split('T')[0];
+                cumulative += grouped[date] || 0;
+                data.push(cumulative || state.followers.length);
+            }
+
+            const max = Math.max(...data, 1);
+            const pts = data.map((v, i) => `${(i / (days - 1)) * 280 + 10},${100 - (v / max) * 80}`).join(' ');
+
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--accent-1)" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="var(--accent-1)" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <polygon points="10,100 ${pts} 290,100" fill="url(#chartGrad)"/>
+                <polyline points="${pts}" fill="none" stroke="var(--accent-1)" stroke-width="2.5" stroke-linecap="round"/>
+                ${data.map((v, i) => `
+                    <circle cx="${(i / (days - 1)) * 280 + 10}" cy="${100 - (v / max) * 80}" r="4" fill="var(--accent-1)"/>
+                `).join('')}
+                <text x="290" y="${100 - (data[data.length - 1] / max) * 80 - 8}" fill="var(--accent-1)" font-size="12" text-anchor="end" font-weight="bold">${data[data.length - 1]}</text>
+            `;
+        }
+
+        // === GAME ===
+        function startGame() {
+            if (state.followers.length < 3) return;
+
+            state.gameActive = true;
+            document.getElementById('gameBtn').classList.add('active');
+
+            const target = state.followers[Math.floor(Math.random() * state.followers.length)];
+            state.gameTarget = target.username;
+
+            document.getElementById('gameTarget').textContent = '@' + state.gameTarget;
+            document.getElementById('gameTimer').className = 'modal-timer';
+            document.getElementById('gameResult').classList.add('hidden');
+            document.getElementById('gameModal').classList.add('show');
+
+            let left = CONFIG.GAME_TIME;
+            document.getElementById('gameTimer').textContent = (left / 1000).toFixed(1);
+
+            state.gameInterval = setInterval(() => {
+                left -= 100;
+                document.getElementById('gameTimer').textContent = (left / 1000).toFixed(1);
+                if (left <= 1500) document.getElementById('gameTimer').classList.add('warning');
+                if (left <= 0) endGame(false);
+            }, 100);
+
+            setTimeout(() => document.getElementById('gameModal').classList.remove('show'), 2000);
+        }
+
+        function checkGameAnswer(username) {
+            if (username.toLowerCase() === state.gameTarget.toLowerCase()) {
+                endGame(true);
+            }
+        }
+
+        function endGame(won) {
+            clearInterval(state.gameInterval);
+            state.gameActive = false;
+            document.getElementById('gameBtn').classList.remove('active');
+
+            document.getElementById('gameModal').classList.add('show');
+            document.getElementById('gameTitle').textContent = won ? '🎉 Победа!' : '😢 Время вышло!';
+            document.getElementById('gameTimer').textContent = '';
+            document.getElementById('gameResult').classList.remove('hidden');
+            document.getElementById('gameResult').className = 'modal-result ' + (won ? 'win' : 'lose');
+            document.getElementById('gameResult').innerHTML = `<h3>${won ? 'Ты нашёл!' : 'Попробуй снова!'}</h3>`;
+
+            const orb = document.querySelector(`[data-username="${state.gameTarget.toLowerCase()}"]`);
+            if (orb) orb.classList.add('found');
+
+            if (won) { playSound('win'); showFireworks(); }
+            else playSound('lose');
+        }
+
+        function closeGame() {
+            clearInterval(state.gameInterval);
+            state.gameActive = false;
+            document.getElementById('gameBtn').classList.remove('active');
+            document.getElementById('gameModal').classList.remove('show');
+        }
+
+        // === FOD ===
+        function checkFOD() {
+            if (state.followers.length === 0) return;
+            const stored = JSON.parse(localStorage.getItem('fod') || '{}');
+            const today = new Date().toDateString();
+
+            if (stored.date !== today) {
+                const random = state.followers[Math.floor(Math.random() * state.followers.length)];
+                state.fod = random.username;
+                localStorage.setItem('fod', JSON.stringify({ date: today, username: state.fod }));
+            } else {
+                state.fod = stored.username;
+            }
+        }
+
+        function showFODModal(f) {
+            const hue = hashStr(f.username) % 360;
+            const avatar = document.getElementById('fodAvatar');
+            avatar.textContent = f.username[0].toUpperCase();
+            avatar.style.background = `linear-gradient(135deg, hsl(${hue},70%,50%), hsl(${(hue+40)%360},70%,40%))`;
+            document.getElementById('fodName').textContent = '@' + f.username;
+            document.getElementById('fodLink').href = `https://instagram.com/${f.username}`;
+            document.getElementById('fodModal').classList.add('show');
+        }
+
+        function closeFod() {
+            document.getElementById('fodModal').classList.remove('show');
+        }
+
+        // === STREAK ===
+        function updateStreak() {
+            const stored = JSON.parse(localStorage.getItem('streak') || '{"count":0,"last":""}');
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+            if (stored.last === today) {
+                document.getElementById('streakCount').textContent = stored.count;
+            } else if (stored.last === yesterday) {
+                stored.count++;
+                stored.last = today;
+                localStorage.setItem('streak', JSON.stringify(stored));
+                document.getElementById('streakCount').textContent = stored.count;
+                if (stored.count % 7 === 0) showFireworks();
+            } else {
+                localStorage.setItem('streak', JSON.stringify({ count: 1, last: today }));
+                document.getElementById('streakCount').textContent = 1;
+            }
+        }
+
+        // === MILESTONES ===
+        function checkMilestones() {
+            if (CONFIG.MILESTONES.includes(state.followers.length)) {
+                setTimeout(showFireworks, 2000);
+            }
+        }
+
+        // === SHAKE ===
+        function setupShake() {
+            if (typeof DeviceMotionEvent !== 'undefined') {
+                if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                    document.body.addEventListener('click', () => {
+                        DeviceMotionEvent.requestPermission().then(r => {
+                            if (r === 'granted') enableShake();
+                        }).catch(() => {});
+                    }, { once: true });
+                } else {
+                    enableShake();
+                }
+            }
+        }
+
+        function enableShake() {
+            let lastShake = 0;
+            window.addEventListener('devicemotion', e => {
+                const acc = e.accelerationIncludingGravity;
+                if (!acc) return;
+                const total = Math.abs(acc.x || 0) + Math.abs(acc.y || 0) + Math.abs(acc.z || 0);
+                if (total > 35 && Date.now() - lastShake > 1000) {
+                    lastShake = Date.now();
+                    shuffleWall();
+                }
+            });
+        }
+
+        // === FIREWORKS ===
+        let fwParticles = [];
+
+        function showFireworks() {
+            const canvas = document.getElementById('fireworksCanvas');
+            const ctx = canvas.getContext('2d');
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            ctx.scale(dpr, dpr);
+            fwParticles = [];
+
+            for (let i = 0; i < 4; i++) {
+                setTimeout(() => createFirework(
+                    Math.random() * window.innerWidth,
+                    Math.random() * window.innerHeight * 0.4 + 50
+                ), i * 250);
+            }
+
+            animateFireworks(ctx);
+        }
+
+        function createFirework(x, y) {
+            const colors = ['#a855f7', '#ec4899', '#22d3ee', '#10b981', '#f59e0b', '#fff'];
+            for (let i = 0; i < 50; i++) {
+                const angle = (Math.PI * 2 / 50) * i;
+                const speed = Math.random() * 5 + 2;
+                fwParticles.push({
+                    x, y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    life: 100,
+                    size: Math.random() * 3 + 1
+                });
+            }
+        }
+
+        function animateFireworks(ctx) {
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+            fwParticles = fwParticles.filter(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.1;
+                p.life -= 2;
+
+                if (p.life > 0) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * (p.life / 100), 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life / 100;
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    return true;
+                }
+                return false;
+            });
+
+            if (fwParticles.length > 0) {
+                requestAnimationFrame(() => animateFireworks(ctx));
+            }
+        }
+
+        // === SOUNDS ===
+        function playSound(type) {
+            if (!state.soundOn) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const sounds = {
+                    click: { freq: 800, dur: 0.06 },
+                    success: { freq: 600, dur: 0.12 },
+                    spin: { freq: 400, dur: 0.3 },
+                    win: { freq: 800, dur: 0.15 },
+                    lose: { freq: 300, dur: 0.25 }
+                };
+
+                const s = sounds[type] || sounds.click;
+                osc.frequency.value = s.freq;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + s.dur);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + s.dur);
+            } catch (e) {}
+        }
+
+        // === HINT ===
+        function showTouchHint() {
+            const hint = document.getElementById('touchHint');
+            hint.classList.add('show');
+            setTimeout(() => hint.classList.remove('show'), CONFIG.HINT_MS);
+        }
+
+        // === UTILS ===
+        function hashStr(s) {
+            let h = 0;
+            for (let i = 0; i < s.length; i++) {
+                h = ((h << 5) - h) + s.charCodeAt(i);
+                h |= 0;
+            }
+            return Math.abs(h);
+        }
+
+        function formatDate(str) {
+            try {
+                return new Date(str).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            } catch { return str; }
+        }
+
+        // Global functions
+        window.showPanel = showPanel;
+        window.closeGame = closeGame;
+        window.closeFod = closeFod;
+    </script>
+</body>
+</html>

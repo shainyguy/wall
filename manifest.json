@@ -1,0 +1,20 @@
+{
+  "name": "Стена Подписчиков @medvedev.tech",
+  "short_name": "Wall",
+  "description": "Интерактивная стена подписчиков Instagram",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05050a",
+  "theme_color": "#a855f7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%23667eea' width='512' height='512' rx='100'/><text y='380' x='256' text-anchor='middle' font-size='300'>🚀</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "entertainment"],
+  "lang": "ru"
+}

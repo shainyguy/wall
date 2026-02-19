@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "username": "medvedev.tech",
+    "displayName": "Medvedev Tech",
+    "lastUpdated": "2025-01-15",
+    "instagramUrl": "https://instagram.com/medvedev.tech",
+    "telegramUrl": "https://t.me/medvedevtech"
+  },
+  "followers": [
+    {
+      "id": 1,
+      "username": "ТВОЙ_ПЕРВЫЙ_ПОДПИСЧИК",
+      "displayName": "",
+      "avatarUrl": "",
+      "addedAt": "2025-01-01",
+      "isNew": false
+    },
+    {
+      "id": 2,
+      "username": "ВТОРОЙ_ПОДПИСЧИК",
+      "displayName": "",
+      "avatarUrl": "",
+      "addedAt": "2025-01-02",
+      "isNew": false
+    },
+    {
+      "id": 3,
+      "username": "ТРЕТИЙ_ПОДПИСЧИК",
+      "displayName": "",
+      "avatarUrl": "",
+      "addedAt": "2025-01-10",
+      "isNew": true
+    }
+  ]
+}
