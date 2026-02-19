@@ -12,7 +12,7 @@
       "username": "witlessss",
       "displayName": "witlessss",
       "avatarUrl": "photo/1.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-14",
       "isNew": false
     },
     {
@@ -20,7 +20,7 @@
       "username": "astrey.store",
       "displayName": "",
       "avatarUrl": "photo/2.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-14",
       "isNew": false
     },
     {
@@ -28,7 +28,7 @@
       "username": "y_biryukova00",
       "displayName": "",
       "avatarUrl": "photo/3.jpg",
-      "addedAt": "2025-01-14",
+      "addedAt": "2026-02-14",
       "isNew": false
     },
     {
@@ -36,7 +36,7 @@
       "username": "alenchik_sergeevna_",
       "displayName": "",
       "avatarUrl": "photo/4.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-14",
       "isNew": false
     },
     {
@@ -44,7 +44,7 @@
       "username": "yulya485",
       "displayName": "",
       "avatarUrl": "photo/5.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-14",
       "isNew": false
     },
     {
@@ -52,7 +52,7 @@
       "username": "odnodvorccev",
       "displayName": "",
       "avatarUrl": "photo/6.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-15",
       "isNew": false
     },
     {
@@ -60,7 +60,7 @@
       "username": "yazykovamary",
       "displayName": "",
       "avatarUrl": "photo/7.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-15",
       "isNew": false
     },
     {
@@ -68,7 +68,7 @@
       "username": "elena.48rus_",
       "displayName": "",
       "avatarUrl": "photo/8.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-15,
       "isNew": false
     },
     {
@@ -76,7 +76,7 @@
       "username": "80l90v",
       "displayName": "",
       "avatarUrl": "photo/9.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-16",
       "isNew": false
     },
     {
@@ -84,7 +84,7 @@
       "username": "lunataro.bot",
       "displayName": "",
       "avatarUrl": "photo/10.jpg",
-      "addedAt": "2025-01-15",
+      "addedAt": "2026-02-16",
       "isNew": false
     },
     {
@@ -92,7 +92,23 @@
       "username": "lashdiva_nz",
       "displayName": "",
       "avatarUrl": "photo/11.jpg",
-      "addedAt": "2025-02-18",
+      "addedAt": "2026-02-17",
+      "isNew": false
+    },
+    {
+      "id": 12,
+      "username": "_d.evgeniya_",
+      "displayName": "",
+      "avatarUrl": "photo/12.jpg",
+      "addedAt": "2026-02-18",
+      "isNew": true
+    },
+     {
+      "id": 13,
+      "username": "mk.tarot_",
+      "displayName": "",
+      "avatarUrl": "photo/13.jpg",
+      "addedAt": "2026-02-18",
       "isNew": true
     }
   ]
